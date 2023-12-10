@@ -1,3 +1,5 @@
+package segmenttree;
+
 public class SegmentTree {
     private static class Node {
         int data, startInterval, endInterval;
