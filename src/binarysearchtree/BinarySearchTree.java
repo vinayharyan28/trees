@@ -115,17 +115,81 @@ public class BinarySearchTree {
         System.out.print(node.value + " ");
     }
 
+    private Node findInorderSuccessor(Node root){
+        while (root.left != null){
+            root = root.left;
+        }
+        return root;
+    }
+
+    private Node delete(Node root, int value){
+        if (root.value < value){
+            root.right = delete(root.right, value);
+        }else if (root.value > value){
+            root.left = delete(root.left, value);
+        }else {
+            // Case1 No child
+            if (root.left == null && root.right == null){
+                return null;
+            }
+
+            // Case2 Single child
+            if (root.left == null){
+                return root.right;
+            }else if (root.right == null){
+                return root.left;
+            }
+
+            // Case3 Both children
+            Node inOrderSuccessor = findInorderSuccessor(root.right);
+            root.value = inOrderSuccessor.value;
+            root.right = delete(root.right, inOrderSuccessor.value);
+        }
+
+        return root;
+    }
+
+    private Node createBalancedBinarySearchTree(int[] arr, int startIndex, int endIndex){
+        if (startIndex > endIndex){
+            return null;
+        }
+
+        int middle = (startIndex + endIndex) / 2;
+        Node root = new Node(arr[middle]);
+        root.left = createBalancedBinarySearchTree(arr, startIndex, middle-1);
+        root.right = createBalancedBinarySearchTree(arr, middle+1, endIndex);
+        return root;
+    }
+
+    public void binaryBalancedSearchTree(int[] arr, int startIndex, int endIndex){
+        root = createBalancedBinarySearchTree(arr, startIndex, endIndex);
+    }
+
+    public void deleteNode(int value){
+         root = delete(root, value);
+    }
+
     public static void main(String[] args){
         BinarySearchTree binarySearchTree = new BinarySearchTree();
-        int[] numbers = {10, 11, 2, 3, 5, 28, 34};
+        int[] numbers = {8, 5, 3, 1, 4, 6, 10, 11, 14};
         binarySearchTree.populate(numbers);
         binarySearchTree.display();
-        System.out.println();
+        System.out.println("Preorder: ");
         binarySearchTree.preorder();
-        System.out.println();
+        System.out.println("\nInorder: ");
         binarySearchTree.inorder();
-        System.out.println();
+        System.out.println("\nPostorder: ");
         binarySearchTree.postorder();
+
+        System.out.println("\nDelete: ");
+        binarySearchTree.deleteNode(5);
+        binarySearchTree.inorder();
+
+        System.out.println();
+        int[] arr = {3, 5, 6, 8, 10, 11, 12};
+        binarySearchTree.binaryBalancedSearchTree(arr, 0, arr.length-1);
+        System.out.println("Preorder: ");
+        binarySearchTree.preorder();
 
     }
 
